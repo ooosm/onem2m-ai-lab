@@ -18,11 +18,36 @@
 
 ## 1단계 — mobius4 설정 한 줄 추가 후 재기동
 
-`config/local.json`의 `"cse"` 블록에 아래 한 줄을 넣고 **mobius4를 다시 띄웁니다.**
+**소스로 실행하는 경우** — `config/local.json`의 `"cse"` 블록에 아래 한 줄을 넣고
+**mobius4를 다시 띄웁니다.**
 
 ```json
 "discovery_limit": 2000,
 ```
+
+**docker compose로 실행하는 경우** — 컨테이너 안에서는 `local.json`이 쓰이지 않고, `.env`에도
+이 설정 자리가 없습니다. 대신 **설정 파일 하나를 컨테이너에 연결**합니다. mobius4 폴더
+(`docker-compose.yml`이 있는 곳)에 파일 두 개를 만듭니다.
+
+`config/local.docker.json` — 이 한 키만 넣습니다(다른 설정은 docker가 넣는 값이 그대로 쓰입니다).
+
+```json
+{ "cse": { "discovery_limit": 2000 } }
+```
+
+`docker-compose.override.yml` — compose가 `docker-compose.yml`과 자동으로 합쳐 읽는 파일입니다.
+
+```yaml
+services:
+  mobius4:
+    volumes:
+      - ./config/local.docker.json:/app/config/local.json:ro
+```
+
+그다음 `docker compose up -d`로 다시 띄웁니다(`docker-compose.yml`은 고치지 않습니다).
+
+> 환경 변수 `NODE_CONFIG`로 넣는 방법은 **안 됩니다** — 컨테이너 시작 스크립트가 그 변수를
+> 통째로 다시 써서 지워집니다.
 
 > **왜 필요한가** — 노트북은 컨테이너의 데이터를 한 번에 목록으로 받아 옵니다. mobius4는
 > 기본으로 **200개까지만** 돌려주는데, 학습 데이터는 컨테이너당 1,096개입니다. 이 설정 없이는
@@ -30,8 +55,16 @@
 
 ## 2단계 — 내 관리자 신원 확인
 
-같은 파일 `config/local.json`의 `"cse"` 블록에서 `"admin"` 값을 확인합니다. 예: `"admin": "SM2"`
-→ 내 관리자 신원은 `SM2`. 아래 3·4단계에서 이 값을 씁니다.
+- **소스로 실행** — `config/local.json`의 `"cse"` 블록에서 `"admin"` 값. 예: `"admin": "SM2"`
+  → 내 관리자 신원은 `SM2`.
+- **docker** — `.env`의 `CSE_ADMIN` 값. 비워 두었다면 첫 기동 때 자동으로 만들어졌으니
+  아래 명령으로 확인합니다.
+
+  ```bash
+  docker compose exec mobius4 cat /var/lib/mobius4/cse-admin
+  ```
+
+아래 3·4단계에서 이 값을 씁니다.
 
 ## 3단계 — 데이터 적재
 
@@ -80,13 +113,15 @@ ADMIN_ORIGIN       = "SM2"     # ← 내 관리자 신원으로
 
 | 증상 | 원인 | 해결 |
 |---|---|---|
-| 적재 검증에서 개수가 **정확히 200** | 1단계 설정이 반영되지 않음 | `local.json` 확인 후 mobius4 재기동 |
+| 적재 검증에서 개수가 **정확히 200** | 1단계 설정이 반영되지 않음 | 소스: `local.json` 확인 후 재기동 · docker: 두 파일 위치 확인 후 `docker compose up -d` |
 | 적재 검증에서 첫 날짜가 2014-12-31 / 2015-12-31 | mobius4가 v4.15.1보다 오래됨 | mobius4 업데이트 |
 | 노트북이 `수신 완료: 0건` | `ADMIN_ORIGIN`이 내 관리자 신원과 다름 | 2단계 값으로 수정 |
 | 적재 시 `TS-train가 이미 있다`로 멈춤 | 이미 적재함 | 그대로 노트북 실행. 다시 넣으려면 두 AE를 먼저 삭제 |
 | 데이터만 다시 확인하고 싶음 | — | `python load_to_mobius4.py seattle-weather.csv --admin <내관리자> --verify-only` |
 
 ## 출처와 라이선스
+
+이 레포는 MIT 라이선스입니다([`LICENSE`](LICENSE)).
 
 - **노트북** — [seslabSJU/sejong_iotclass](https://github.com/seslabSJU/sejong_iotclass)의
   `For_Training_Practice/TimeSeries/train_model.ipynb`를 고친 것입니다. 원본은 MIT 라이선스
