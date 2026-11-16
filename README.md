@@ -10,11 +10,32 @@
 | `seattle-weather.csv` | 데이터(Kaggle — Seattle 2012~2015, 1,461일) |
 | `load_to_mobius4.py` | CSV를 mobius4 리소스로 만들고, 제대로 들어갔는지 스스로 검증 |
 | `train_model_local.ipynb` | 실습 노트북 — 첫 셀은 학습(원격판에서 주소·AE 이름·헤더만 바꾼 것), 그 아래는 추론 실습 |
+| `environment.yml` | 실습용 conda 환경(Python 3.12, PyTorch 2.5.1, scikit-learn 1.6.1, Jupyter) |
 
 ## 준비물
 
 - mobius4 **v4.15.1 이상** — 그 이전 버전은 데이터 순서가 보장되지 않습니다
-- Python 패키지: `torch`(1.13 이상), `scikit-learn`(1.2 이상), `numpy`, `requests`, 그리고 Jupyter
+- Anaconda(또는 Miniconda)
+
+## 0단계 — 실습용 conda 환경 만들기 (처음 한 번)
+
+레포 폴더에서 아래 중 하나로 `environment.yml`을 가져옵니다.
+
+- **Anaconda Navigator** — Environments → Import → Local drive에서 `environment.yml` 선택
+- **Anaconda Prompt / 터미널**
+
+  ```bash
+  conda env create -f environment.yml
+  ```
+
+만들어진 환경(`onem2m-ai-lab`)을 켜고 Jupyter를 띄웁니다. 이후 단계의 `python` 명령도 이 환경에서 실행합니다.
+
+```bash
+conda activate onem2m-ai-lab
+jupyter notebook
+```
+
+> 버전은 세종대 14-1 강의 환경과 같습니다. 그 환경이 이미 있다면 그대로 써도 됩니다.
 
 ## 1단계 — mobius4 설정 한 줄 추가 후 재기동
 
