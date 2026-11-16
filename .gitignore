@@ -2,3 +2,6 @@
 __pycache__/
 *.pth
 .DS_Store
+
+# 교안(pptx)은 로컬에만 둔다 — 공개하지 않음
+slides/
