@@ -15,18 +15,20 @@
 ## 준비물
 
 - mobius4 **v4.15.1 이상** — 그 이전 버전은 데이터 순서가 보장되지 않습니다
-- Anaconda(또는 Miniconda)
+- [Miniconda](https://www.anaconda.com/download) — conda만 들어 있는 최소 설치본입니다. Anaconda 전체 설치본이 이미 있으면 그대로 써도 됩니다
 
 ## 0단계 — 실습용 conda 환경 만들기 (처음 한 번)
 
-레포 폴더에서 아래 중 하나로 `environment.yml`을 가져옵니다.
+1. Miniconda를 설치합니다. [anaconda.com/download](https://www.anaconda.com/download) → Miniconda 설치 파일
+2. 시작 메뉴에서 **Anaconda Prompt**를 엽니다(macOS·Linux는 터미널).
+3. 레포 폴더로 이동해 `environment.yml`로 환경을 만듭니다.
 
-- **Anaconda Navigator** — Environments → Import → Local drive에서 `environment.yml` 선택
-- **Anaconda Prompt / 터미널**
+   ```bash
+   cd onem2m-ai-lab
+   conda env create -f environment.yml
+   ```
 
-  ```bash
-  conda env create -f environment.yml
-  ```
+   처음 실행하면 Anaconda 기본 저장소의 이용 약관(Terms of Service)에 동의하는지 두 번 묻습니다. 두 번 모두 `a`를 입력합니다. 실습 패키지는 conda-forge에서 받지만, conda가 기본 설정에 들어 있는 저장소의 약관 동의도 함께 확인하기 때문입니다.
 
 만들어진 환경(`onem2m-ai-lab`)을 켜고 Jupyter를 띄웁니다. 이후 단계의 `python` 명령도 이 환경에서 실행합니다.
 
@@ -35,7 +37,9 @@ conda activate onem2m-ai-lab
 jupyter notebook
 ```
 
-> 버전은 세종대 14-1 강의 환경과 같습니다. 그 환경이 이미 있다면 그대로 써도 됩니다.
+> **Anaconda 전체 설치본을 쓰는 경우** — 위 명령을 그대로 써도 되고, Anaconda Navigator에서 Environments → Import → Local drive로 `environment.yml`을 골라도 됩니다. 어느 쪽이든 같은 환경이 만들어집니다. 세종대 14-1 강의 때 만든 환경이 있으면 버전이 같으므로 그대로 써도 됩니다.
+>
+> 환경 이름은 `environment.yml`의 `name:` 값입니다. 다른 이름을 쓰려면 `conda env create -f environment.yml -n <이름>`처럼 지정합니다.
 
 ## 1단계 — mobius4 설정 한 줄 추가 후 재기동
 
