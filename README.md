@@ -25,10 +25,12 @@
 
    ```bash
    cd onem2m-ai-lab
+   conda config --set channel_priority strict
    conda env create -f environment.yml
    ```
 
-   처음 실행하면 Anaconda 기본 저장소의 이용 약관(Terms of Service)에 동의하는지 두 번 묻습니다. 두 번 모두 `a`를 입력합니다. 실습 패키지는 conda-forge에서 받지만, conda가 기본 설정에 들어 있는 저장소의 약관 동의도 함께 확인하기 때문입니다.
+   - 첫 줄(`channel_priority strict`)은 패키지를 conda-forge에서만 받도록 고정합니다. 이 설정이 없으면 Windows에서 Anaconda 기본 저장소의 패키지가 하나 섞여 들어와, 노트북의 `import torch`가 `DLL load failed while importing _C` 오류로 멈춥니다.
+   - 처음 실행하면 Anaconda 기본 저장소의 이용 약관(Terms of Service)에 동의하는지 묻습니다(Windows 세 번, macOS·Linux 두 번). 매번 `a`를 입력합니다. 실습 패키지는 conda-forge에서 받지만, conda가 기본 설정에 들어 있는 저장소의 약관 동의도 함께 확인하기 때문입니다.
 
 만들어진 환경(`onem2m-ai-lab`)을 켜고 Jupyter를 띄웁니다. 이후 단계의 `python` 명령도 이 환경에서 실행합니다.
 
@@ -37,7 +39,7 @@ conda activate onem2m-ai-lab
 jupyter notebook
 ```
 
-> **Anaconda 전체 설치본을 쓰는 경우** — 위 명령을 그대로 써도 되고, Anaconda Navigator에서 Environments → Import → Local drive로 `environment.yml`을 골라도 됩니다. 어느 쪽이든 같은 환경이 만들어집니다. 세종대 14-1 강의 때 만든 환경이 있으면 버전이 같으므로 그대로 써도 됩니다.
+> **Anaconda 전체 설치본을 쓰는 경우** — 위 명령을 그대로 써도 되고, `conda config --set channel_priority strict`를 먼저 실행한 뒤 Anaconda Navigator에서 Environments → Import → Local drive로 `environment.yml`을 골라도 됩니다. 어느 쪽이든 같은 환경이 만들어집니다. 세종대 14-1 강의 때 만든 환경이 있으면 버전이 같으므로 그대로 써도 됩니다.
 >
 > 환경 이름은 `environment.yml`의 `name:` 값입니다. 다른 이름을 쓰려면 `conda env create -f environment.yml -n <이름>`처럼 지정합니다.
 
@@ -159,6 +161,7 @@ ADMIN_ORIGIN       = "SM2"     # ← 내 관리자 신원으로
 |---|---|---|
 | 적재 검증에서 개수가 **정확히 200** | 1단계 설정이 반영되지 않음 | 소스: `local.json` 확인 후 재기동 · docker: 두 파일 위치 확인 후 `docker compose up -d` |
 | 적재 검증에서 첫 날짜가 2014-12-31 / 2015-12-31 | mobius4가 v4.15.1보다 오래됨 | mobius4 업데이트 |
+| Windows에서 `import torch`가 `DLL load failed while importing _C`로 멈춤 | 기본 저장소 패키지(`llvm-openmp`)가 섞여 OpenMP DLL이 덮어써짐 | `conda config --set channel_priority strict` → `conda env remove -n onem2m-ai-lab` → `conda env create -f environment.yml` |
 | 노트북이 `수신 완료: 0건` | `ADMIN_ORIGIN`이 내 관리자 신원과 다름 | 2단계 값으로 수정 |
 | 적재 시 `TS-train가 이미 있다`로 멈춤 | 이미 적재함 | 그대로 노트북 실행. 다시 넣으려면 두 AE를 먼저 삭제 |
 | 추론 셀에서 `먼저 위의 학습 셀을 실행하세요` | 커널을 다시 시작했거나 학습 셀을 건너뜀 | 학습 셀부터 다시 실행 |
